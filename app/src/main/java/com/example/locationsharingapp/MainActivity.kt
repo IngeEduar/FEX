@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var mMap: GoogleMap? = null
@@ -84,6 +85,35 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         deleteMarker.setOnClickListener {
             currentMarker?.remove()
             deleteMarker.visibility = View.GONE
+        }
+
+
+        // Navbar config
+        val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_navigation)
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.action_home -> {
+                    Toast.makeText(this, "Inicio seleccionado", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.action_profile -> {
+                    Toast.makeText(this, "Perfil seleccionado", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.action_settings -> {
+                    Toast.makeText(this, "Ajustes seleccionados", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.action_settings -> {
+                    Toast.makeText(this, "Ajustes seleccionados", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.action_chats -> {
+                    Toast.makeText(this, "Chats seleccionados", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                else -> false
+            }
         }
     }
 

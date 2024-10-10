@@ -63,4 +63,13 @@
             android:background="@color/white"
             tools:ignore="HardcodedText" />
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            app:menu="@menu/navbar"
+            app:itemBackground="@color/material_dynamic_neutral80"
+            app:itemTextColor="#282828" />
+
 </RelativeLayout>
