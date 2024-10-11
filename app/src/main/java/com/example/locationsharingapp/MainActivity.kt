@@ -4,6 +4,7 @@ import android.Manifest
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
@@ -97,15 +98,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     true
                 }
                 R.id.action_profile -> {
-                    Toast.makeText(this, "Perfil seleccionado", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, ProfileActivity::class.java)
+                    startActivity(intent)
                     true
                 }
                 R.id.action_settings -> {
-                    Toast.makeText(this, "Ajustes seleccionados", Toast.LENGTH_SHORT).show()
-                    true
-                }
-                R.id.action_settings -> {
-                    Toast.makeText(this, "Ajustes seleccionados", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, SettingsActivity::class.java)
+                    startActivity(intent)
                     true
                 }
                 R.id.action_chats -> {

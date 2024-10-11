@@ -1,0 +1,102 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:background="@color/white">
+
+    <!-- Imagen del logo de la aplicación -->
+
+    <!-- Input de email -->
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
+
+    <ImageView
+            android:id="@+id/app_logo"
+            android:layout_width="300dp"
+            android:layout_height="250dp"
+            android:src="@drawable/app_logo"
+            android:layout_marginTop="32dp"
+            android:contentDescription="Logo de la aplicación" />
+
+    </RelativeLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/email_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="250dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:textColor="#2D2D2D"
+                android:padding="12dp"
+                android:backgroundTint="#C5C5C5" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Input de password -->
+    <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/password_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/email_input_layout"
+            android:layout_marginTop="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Contraseña"
+                android:inputType="textPassword"
+                android:textColor="#2D2D2D"
+                android:padding="12dp"
+                android:backgroundTint="#C5C5C5" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Botón de login -->
+    <Button
+            android:id="@+id/login_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/password_input_layout"
+            android:layout_marginTop="24dp"
+            android:text="Iniciar Sesión"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/teal_700"
+            android:padding="12dp"
+            android:elevation="4dp" />
+
+    <!-- Botón de biometría -->
+    <Button
+            android:id="@+id/biometric_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/login_button"
+            android:layout_marginTop="16dp"
+            android:text="Usar Biometría"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/teal_700"
+            android:padding="12dp"
+            android:elevation="4dp" />
+
+    <TextView
+            android:id="@+id/footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="© 2024 FESC. Todos los derechos reservados."
+            android:textColor="#575757"
+            android:background="@color/white" />
+</RelativeLayout>

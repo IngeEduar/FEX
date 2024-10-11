@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:label="Perfil"
+            android:titleTextColor="@android:color/white"
+            tools:ignore="HardcodedText" />
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar"
+            android:gravity="center"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
+
+        <ImageView
+                android:id="@+id/settings_icon"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/circle_background"
+                android:src="@drawable/profile"
+                android:contentDescription="Icono de ajustes"
+                android:padding="24dp" />
+    </RelativeLayout>
+
+    <!-- Usuario Información -->
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar"
+            android:layout_marginTop="120dp"
+            android:padding="16dp">
+
+        <TextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+
+        <TextView
+                android:id="@+id/txt_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Correo electrónico:"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp"/>
+
+        <TextView
+                android:id="@+id/user_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp"/>
+
+        <TextView
+                android:id="@+id/txt_user_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Información adicional:"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp"/>
+
+        <TextView
+                android:id="@+id/user_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp"/>
+
+    </LinearLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            app:menu="@menu/navbar"
+            app:itemBackground="@color/material_dynamic_neutral80"
+            app:itemTextColor="#282828" />
+
+</RelativeLayout>
