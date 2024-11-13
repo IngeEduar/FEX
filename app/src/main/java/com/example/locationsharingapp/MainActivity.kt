@@ -7,12 +7,18 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.example.locationsharingapp.Const.HostConfig
 import com.example.locationsharingapp.services.HttpClient
 import org.json.JSONArray
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -44,10 +50,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var SEARCH_MODE_FIND: String = "find"
     private var SEARCH_MODE_CANCEL: String = "cancel"
 
+    private lateinit var email: String
+    private lateinit var userId: String
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        email = intent.getStringExtra("email") ?: ""
+        userId = intent.getStringExtra("user_id") ?: "2"
 
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
         toolbar.title = "FEX - Educación"
@@ -215,10 +227,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         Thread {
             try {
                 val response = httpClient.doGetRequest(
-                    "https://eduar.free.beeceptor.com/todos?lon="
-                            + currentLocation.longitude
-                            + "&lat="
-                            + currentLocation.latitude
+                    HostConfig.HOST + "/users/$userId/location?longitude=" +
+                            currentLocation.longitude + "&latitude=" +
+                            currentLocation.latitude + "&max_distance=1000"
                 )
                 runOnUiThread {
                     if (response != null) {
@@ -227,23 +238,44 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         for (i in 0 until jsonArray.length()) {
                             val person = jsonArray.optJSONObject(i)
                             if (person != null) {
-                                val username = person.optString("name", "Sin nombre")
+                                val user = person.optJSONObject("user")
+                                val name = user?.optString("name", "Sin nombre")
+                                val email = user?.optString("email", "No especificado")
+                                val hobbies = user?.optString("hobbies", "No especificado")
+                                val interests = user?.optString("interests", "No especificado")
+                                val username = user?.optString("username", "Sin usuario")
+                                val profilePictureUrl = user?.optString("profile_picture", "")
                                 val lat = person.optDouble("lat", Double.NaN)
                                 val lon = person.optDouble("lon", Double.NaN)
 
                                 if (!lat.isNaN() && !lon.isNaN()) {
                                     val userLocation = LatLng(lat, lon)
-                                    val userMarker = mMap?.addMarker(
-                                        MarkerOptions().position(userLocation).title(
-                                            "Username: $username"
-                                        )
-                                            .icon(
-                                                BitmapDescriptorFactory
-                                                    .defaultMarker(
-                                                        BitmapDescriptorFactory.HUE_MAGENTA
-                                                    )
-                                            )
+
+                                    // Crear el título y descripción para el marcador
+                                    val markerTitle = "Usuario: $username"
+                                    val markerSnippet = "Nombre: $name\nEmail: $email\nHobbies: $hobbies\nIntereses: $interests"
+
+                                    // Crear un mapa de información para pasarla al marcador
+                                    val userInfo = mapOf(
+                                        "name" to name,
+                                        "email" to email,
+                                        "hobbies" to hobbies,
+                                        "interests" to interests,
+                                        "username" to username,
+                                        "profile_picture" to profilePictureUrl
                                     )
+
+                                    // Agregar el marcador en el mapa
+                                    val userMarker = mMap?.addMarker(
+                                        MarkerOptions()
+                                            .position(userLocation)
+                                            .title(markerTitle)
+                                            .snippet(markerSnippet)
+                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
+                                    )
+
+                                    // Asignar la información del usuario al marcador
+                                    userMarker?.tag = userInfo
 
                                     if (userMarker != null) {
                                         usersMarkers.add(userMarker)
@@ -251,6 +283,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                 }
                             }
                         }
+
+                        // Agregar el listener para el clic en el marcador
+                        mMap?.setOnMarkerClickListener { marker ->
+                            val user = marker.tag as? Map<*, *>
+                            user?.let {
+                                showUserInfoPopup(marker.position, it)
+                            } ?: run {
+                                marker.showInfoWindow()
+                            }
+                            true
+                        }
+
                     } else {
                         Toast.makeText(this, "Error en la petición", Toast.LENGTH_LONG).show()
                     }
@@ -260,6 +304,45 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }.start()
     }
+
+    private fun showUserInfoPopup(position: LatLng, userInfo: Map<*, *>) {
+        // Inflar el layout de la ventana flotante
+        val popupView = layoutInflater.inflate(R.layout.user_marker, null)
+
+        // Referencias a los TextViews en el layout
+        val userNameTextView = popupView.findViewById<TextView>(R.id.user_name)
+        val userEmailTextView = popupView.findViewById<TextView>(R.id.user_email)
+        val userHobbiesTextView = popupView.findViewById<TextView>(R.id.user_hobbies)
+
+        // Llenar los datos de la vista con la información del usuario
+        userNameTextView.text = userInfo["name"].toString()
+        userEmailTextView.text = userInfo["email"].toString()
+        userHobbiesTextView.text = userInfo["hobbies"].toString()
+
+        // Crear el PopupWindow
+        val popupWindow = PopupWindow(
+            popupView,
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            true // Habilita el cierre cuando se toca fuera
+        )
+
+        // Permitir el toque fuera del PopupWindow para cerrarlo
+        popupWindow.isOutsideTouchable = true
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) // Necesario para que funcione isOutsideTouchable
+
+        // Establecer la animación para el popup (opcional)
+        popupWindow.animationStyle = android.R.style.Animation_Dialog
+
+        // Mostrar el PopupWindow en la pantalla, en la posición del marcador
+        popupWindow.showAtLocation(
+            findViewById(R.id.map), Gravity.CENTER,
+            (position.longitude * resources.displayMetrics.density).toInt(),
+            (position.latitude * resources.displayMetrics.density).toInt()
+        )
+    }
+
+
 
     private fun createSearchRange() {
         circle = mMap?.addCircle(

@@ -64,8 +64,10 @@ class LoginActivity : AppCompatActivity() {
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 // Si la autenticación es exitosa, pasa a MainActivity
                 val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("email", email)
+                intent.putExtra("user_id", 1)
                 startActivity(intent)
-                finish() // Cierra la actividad de login
+                finish()
             } else {
                 Toast.makeText(this, "Por favor ingresa correo y contraseña", Toast.LENGTH_SHORT).show()
             }
