@@ -50,7 +50,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var SEARCH_MODE_FIND: String = "find"
     private var SEARCH_MODE_CANCEL: String = "cancel"
 
-    private lateinit var email: String
     private lateinit var userId: String
 
     @SuppressLint("SetTextI18n")
@@ -58,7 +57,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        email = intent.getStringExtra("email") ?: ""
         userId = intent.getStringExtra("user_id") ?: "2"
 
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)

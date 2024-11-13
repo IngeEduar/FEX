@@ -9,6 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import com.example.locationsharingapp.Const.HostConfig
+import com.example.locationsharingapp.services.HttpClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.util.concurrent.Executor
 
 class LoginActivity : AppCompatActivity() {
@@ -16,6 +23,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var executor: Executor
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
+
+    private var httpClient: HttpClient = HttpClient()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,17 +67,46 @@ class LoginActivity : AppCompatActivity() {
         loginButton.setOnClickListener {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
-            // Aquí deberías agregar la lógica para autenticar al usuario con email y contraseña
-            // Por ejemplo, verificar en la base de datos o API
-
+            
             if (email.isNotEmpty() && password.isNotEmpty()) {
-                // Si la autenticación es exitosa, pasa a MainActivity
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("email", email)
-                intent.putExtra("user_id", 1)
-                startActivity(intent)
-                finish()
+                // Usar Coroutine para la solicitud de red en un hilo de fondo
+                CoroutineScope(Dispatchers.IO).launch {
+                    val response = httpClient.doPostRequest(
+                        HostConfig.HOST + "/login",
+                        """{"email": "$email", "password": "$password"}"""
+                    )
+
+                    withContext(Dispatchers.Main) {
+                        if (response != null) {
+                            try {
+                                // Convertir la respuesta a JSON
+                                val jsonResponse = JSONObject(response)
+
+                                if (jsonResponse.has("id")) {
+                                    val userId = jsonResponse.getString("id")
+
+                                    // Lanzar la siguiente actividad con los datos del usuario
+                                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                                    intent.putExtra("user_id", userId)
+                                    startActivity(intent)
+                                    finish()
+                                } else {
+                                    // Mostrar un mensaje si no se encuentra el campo "id"
+                                    Toast.makeText(this@LoginActivity, "Inicio de sesión incorrecto", Toast.LENGTH_SHORT).show()
+                                }
+                            } catch (e: Exception) {
+                                // Manejar excepciones si ocurre un error al analizar la respuesta
+                                e.printStackTrace()
+                                Toast.makeText(this@LoginActivity, "Error al analizar la respuesta", Toast.LENGTH_SHORT).show()
+                            }
+                        } else {
+                            // Mostrar un mensaje si no hay respuesta
+                            Toast.makeText(this@LoginActivity, "Error de conexión o respuesta nula", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             } else {
+                // Si el correo o la contraseña están vacíos
                 Toast.makeText(this, "Por favor ingresa correo y contraseña", Toast.LENGTH_SHORT).show()
             }
         }
