@@ -11,9 +11,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class SettingsActivity : AppCompatActivity() {
 
+    private lateinit var userId: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+
+        userId = intent.getStringExtra("user_id") ?: "2"
 
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
         toolbar.title = "Ajustes"
@@ -27,16 +31,19 @@ class SettingsActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.action_home -> {
                     val intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra("user_id", userId)
                     startActivity(intent)
                     true
                 }
                 R.id.action_profile -> {
                     val intent = Intent(this, ProfileActivity::class.java)
+                    intent.putExtra("user_id", userId)
                     startActivity(intent)
                     true
                 }
                 R.id.action_settings -> {
                     val intent = Intent(this, SettingsActivity::class.java)
+                    intent.putExtra("user_id", userId)
                     startActivity(intent)
                     true
                 }

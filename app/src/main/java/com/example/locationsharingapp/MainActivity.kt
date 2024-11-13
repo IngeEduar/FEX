@@ -109,11 +109,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
                 R.id.action_profile -> {
                     val intent = Intent(this, ProfileActivity::class.java)
+                    intent.putExtra("user_id", userId)
                     startActivity(intent)
                     true
                 }
                 R.id.action_settings -> {
                     val intent = Intent(this, SettingsActivity::class.java)
+                    intent.putExtra("user_id", userId)
                     startActivity(intent)
                     true
                 }
